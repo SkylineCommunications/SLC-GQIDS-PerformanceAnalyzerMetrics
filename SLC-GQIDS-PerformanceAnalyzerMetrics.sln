@@ -44,7 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PerformanceAnalyzerGQI", "P
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{C711C266-AD60-416C-A036-16783CA4FBB3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceAnalyzerGQI", "CapturedMetricsGQI_1\PerformanceAnalyzerGQI.csproj", "{DB633684-E9B5-41AF-8293-A75CE3BF923F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceAnalyzerGQI", "PerformanceAnalyzerGQI\PerformanceAnalyzerGQI.csproj", "{DB633684-E9B5-41AF-8293-A75CE3BF923F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
