@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DMSScript options="272" xmlns="http://www.skyline.be/automation">
+	<Name>Performance Analyzer GQI</Name>
+	<Description></Description>
+	<Type>Automation</Type>
+	<Author>Skyline Communications</Author>
+	<CheckSets>FALSE</CheckSets>
+	<Folder>Performance Analyzer</Folder>
+
+	<Protocols>
+	</Protocols>
+
+	<Memory>
+	</Memory>
+
+	<Parameters>
+	</Parameters>
+
+	<Script>
+		<Exe id="1" type="csharp">
+			<Value><![CDATA[[Project:PerformanceAnalyzerGQI]]]></Value>
+			<Param type="preCompile">true</Param>
+			<Param type="libraryName">Performance Analyzer GQI</Param>
+		</Exe>
+	</Script>
+</DMSScript>
