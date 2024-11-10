@@ -13,20 +13,20 @@
 	[GQIMetaData(Name = "Get Performance Metrics")]
 	public class GetPerformanceMetrics : IGQIDataSource, IGQIInputArguments
 	{
-		private readonly GQIStringArgument _folderPathArgument = new GQIStringArgument("Folder Path") { IsRequired = false };
-		private readonly GQIStringArgument _fileNameArgument = new GQIStringArgument("File Name") { IsRequired = true };
+		private readonly GQIStringArgument folderPathArgument = new GQIStringArgument("Folder Path") { IsRequired = false };
+		private readonly GQIStringArgument fileNameArgument = new GQIStringArgument("File Name") { IsRequired = true };
 
 		internal static List<PerformanceLog> PerformanceMetrics { get; set; }
 
 		public GQIArgument[] GetInputArguments()
 		{
-			return new GQIArgument[] { _folderPathArgument, _fileNameArgument };
+			return new GQIArgument[] { folderPathArgument, fileNameArgument };
 		}
 
 		public OnArgumentsProcessedOutputArgs OnArgumentsProcessed(OnArgumentsProcessedInputArgs args)
 		{
-			var folderPath = String.IsNullOrWhiteSpace(args.GetArgumentValue(_folderPathArgument)) ? @"C:\Skyline_Data\PerformanceLogger" : args.GetArgumentValue(_folderPathArgument);
-			var fileName = args.GetArgumentValue(_fileNameArgument);
+			var folderPath = String.IsNullOrWhiteSpace(args.GetArgumentValue(folderPathArgument)) ? @"C:\Skyline_Data\PerformanceLogger" : args.GetArgumentValue(folderPathArgument);
+			var fileName = args.GetArgumentValue(fileNameArgument);
 
 			var rawJson = File.ReadAllText(Path.Combine(folderPath, fileName));
 

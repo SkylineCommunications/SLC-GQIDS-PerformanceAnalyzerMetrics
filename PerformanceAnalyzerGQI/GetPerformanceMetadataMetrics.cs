@@ -11,21 +11,21 @@
 	[GQIMetaData(Name = "Get Performance Metadata Metrics")]
 	public class GetPerformanceMetadataMetrics : IGQIDataSource, IGQIInputArguments
 	{
-		private readonly GQIStringArgument _idArg = new GQIStringArgument("Metadata ID") { IsRequired = true };
-		private List<PerformanceLog> _performanceMetrics;
+		private readonly GQIStringArgument metadataIdArgument = new GQIStringArgument("Metadata ID") { IsRequired = true };
+		private List<PerformanceLog> performanceMetrics;
 
 		private string id;
 
 		public GQIArgument[] GetInputArguments()
 		{
-			return new GQIArgument[] { _idArg };
+			return new GQIArgument[] { metadataIdArgument };
 		}
 
 		public OnArgumentsProcessedOutputArgs OnArgumentsProcessed(OnArgumentsProcessedInputArgs args)
 		{
-			id = args.GetArgumentValue(_idArg);
+			id = args.GetArgumentValue(metadataIdArgument);
 
-			_performanceMetrics = GetPerformanceMetrics.PerformanceMetrics;
+			performanceMetrics = GetPerformanceMetrics.PerformanceMetrics;
 
 			return default;
 		}
@@ -43,7 +43,7 @@
 		{
 			Dictionary<string, string> metadata = new Dictionary<string, string>();
 
-			foreach (var performanceMetric in _performanceMetrics)
+			foreach (var performanceMetric in performanceMetrics)
 			{
 				foreach (var performanceData in performanceMetric.Data)
 				{
