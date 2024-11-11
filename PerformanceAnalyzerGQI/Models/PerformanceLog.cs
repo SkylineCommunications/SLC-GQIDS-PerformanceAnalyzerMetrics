@@ -2,7 +2,7 @@
 // This code was copied from ScriptPerformanceLogger/Loggers/PerformanceFileLogger.
 // Changes to this will result in errors.
 //------------------------------------------------------------------------------
-namespace Skyline.DataMiner.Utilities.PerformanceAnalyzerGQI.Models
+namespace Skyline.DataMiner.Utils.PerformanceAnalyzerGQI.Models
 {
 	using System;
 	using System.Collections.Generic;

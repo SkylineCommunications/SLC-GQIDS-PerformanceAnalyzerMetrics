@@ -1,4 +1,4 @@
-﻿namespace Skyline.DataMiner.Utilities.PerformanceAnalyzerGQI
+﻿namespace Skyline.DataMiner.Utils.PerformanceAnalyzerGQI
 {
 	using System;
 	using System.Collections.Generic;
@@ -8,7 +8,7 @@
 	using Newtonsoft.Json;
 
 	using Skyline.DataMiner.Analytics.GenericInterface;
-	using Skyline.DataMiner.Utilities.PerformanceAnalyzerGQI.Models;
+	using Skyline.DataMiner.Utils.PerformanceAnalyzerGQI.Models;
 
 	[GQIMetaData(Name = "Get Performance Metrics")]
 	public class GetPerformanceMetrics : IGQIDataSource, IGQIInputArguments

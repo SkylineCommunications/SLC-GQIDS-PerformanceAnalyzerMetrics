@@ -1,4 +1,4 @@
-﻿namespace Skyline.DataMiner.Utilities.PerformanceAnalyzerGQI.Models
+﻿namespace Skyline.DataMiner.Utils.PerformanceAnalyzerGQI.Models
 {
 	using System;
 
