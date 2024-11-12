@@ -2,19 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-
     using Newtonsoft.Json;
-
     using Skyline.DataMiner.Analytics.GenericInterface;
     using Skyline.DataMiner.Utils.PerformanceAnalyzerGQI.Models;
 
     [GQIMetaData(Name = "Get Performance Metrics")]
     public class GetPerformanceMetrics : IGQIDataSource, IGQIInputArguments
     {
-        private readonly GQIStringArgument nameArg = new GQIStringArgument("Name") { IsRequired = true };
-        private readonly GQIStringArgument startTimeArg = new GQIStringArgument("Start Time") { IsRequired = true };
+        private readonly GQIStringArgument idArg = new GQIStringArgument("ID") { IsRequired = true };
 
         private List<PerformanceLog> selectedPerformaceLog;
 
@@ -22,21 +18,25 @@
 
         public GQIArgument[] GetInputArguments()
         {
-            return new GQIArgument[] { nameArg, startTimeArg };
+            return new GQIArgument[] { idArg };
         }
 
         public OnArgumentsProcessedOutputArgs OnArgumentsProcessed(OnArgumentsProcessedInputArgs args)
         {
-            var name = args.GetArgumentValue(nameArg);
-            var startTime = args.GetArgumentValue(startTimeArg);
+            try
+            {
+                var id = args.GetArgumentValue(idArg);
 
-            selectedPerformaceLog = PerformanceMetrics
-                .Where(x => x.Name.Equals(name) && Convert.ToString(x.StartTime.ToOADate()).Equals(startTime))
-                .ToList() ?? PerformanceMetrics;
+                selectedPerformaceLog = PerformanceMetrics.Where(x => x.Id.ToString() == id).ToList() ?? PerformanceMetrics;
 
-            selectedPerformaceLog = selectedPerformaceLog.Any() ? selectedPerformaceLog : PerformanceMetrics;
+                selectedPerformaceLog = selectedPerformaceLog.Any() ? selectedPerformaceLog : PerformanceMetrics;
 
-            return default;
+                return default;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Please, select one row so valid data could be shown.");
+            }
         }
 
         public GQIColumn[] GetColumns()

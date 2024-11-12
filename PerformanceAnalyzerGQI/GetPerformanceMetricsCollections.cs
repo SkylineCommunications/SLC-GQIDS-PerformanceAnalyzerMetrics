@@ -22,13 +22,20 @@
 
         public OnArgumentsProcessedOutputArgs OnArgumentsProcessed(OnArgumentsProcessedInputArgs args)
         {
-            var location = args.GetArgumentValue(fileLocation);
-            var name = args.GetArgumentValue(fileName);
+            try
+            {
+                var location = args.GetArgumentValue(fileLocation);
+                var name = args.GetArgumentValue(fileName);
 
-            var rawJson = File.ReadAllText(Path.Combine(location, name));
-            PerformanceMetrics = JsonConvert.DeserializeObject<List<PerformanceLog>>(rawJson);
+                var rawJson = File.ReadAllText(Path.Combine(location, name));
+                PerformanceMetrics = JsonConvert.DeserializeObject<List<PerformanceLog>>(rawJson);
 
-            return default;
+                return default;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Please, select one row so valid data could be shown.");
+            }
         }
 
         public GQIColumn[] GetColumns()
@@ -36,8 +43,9 @@
             return new GQIColumn[]
             {
                 new GQIStringColumn("Name"),
-                new GQIStringColumn("Start Time"),
+                new GQIDateTimeColumn("Start Time"),
                 new GQIStringColumn("Metadata"),
+                new GQIStringColumn("ID"),
             };
         }
 
@@ -56,12 +64,16 @@
                             },
                             new GQICell
                             {
-                                Value = Convert.ToString(metric.StartTime.ToOADate()),
+                                Value =metric.StartTime.ToUniversalTime(),
                                 DisplayValue = metric.StartTime.ToString("MM/dd/yyyy hh:mm:ss tt"),
                             },
                             new GQICell
                             {
                                 Value = JsonConvert.SerializeObject(metric.Metadata),
+                            },
+                            new GQICell
+                            {
+                                Value = metric.Id.ToString(),
                             },
                         }));
             }

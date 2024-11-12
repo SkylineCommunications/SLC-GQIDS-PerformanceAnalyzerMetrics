@@ -4,32 +4,35 @@
 //------------------------------------------------------------------------------
 namespace Skyline.DataMiner.Utils.PerformanceAnalyzerGQI.Models
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-	using Newtonsoft.Json;
+    using Newtonsoft.Json;
 
-	internal class PerformanceLog
-	{
-		[JsonProperty(Order = 0)]
-		public string Name { get; set; }
+    internal class PerformanceLog
+    {
+        [JsonProperty(Order = 0)]
+        public Guid Id { get; set; }
 
-		[JsonProperty(Order = 1)]
-		public DateTime StartTime { get; set; }
+        [JsonProperty(Order = 1)]
+        public string Name { get; set; }
 
-		[JsonProperty(Order = 2)]
-		public IReadOnlyDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
+        [JsonProperty(Order = 2)]
+        public DateTime StartTime { get; set; }
 
-		[JsonProperty(Order = 3)]
-		public IReadOnlyList<PerformanceData> Data { get; set; } = new List<PerformanceData>();
+        [JsonProperty(Order = 3)]
+        public IReadOnlyDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
 
-		[JsonIgnore]
-		public bool Any => (Metadata?.Any() == true) || (Data?.Any() == true);
+        [JsonProperty(Order = 4)]
+        public IReadOnlyList<PerformanceData> Data { get; set; } = new List<PerformanceData>();
 
-		public bool ShouldSerializeMetadata()
-		{
-			return Metadata.Count > 0;
-		}
-	}
+        [JsonIgnore]
+        public bool Any => (Metadata?.Any() == true) || (Data?.Any() == true);
+
+        public bool ShouldSerializeMetadata()
+        {
+            return Metadata.Count > 0;
+        }
+    }
 }
