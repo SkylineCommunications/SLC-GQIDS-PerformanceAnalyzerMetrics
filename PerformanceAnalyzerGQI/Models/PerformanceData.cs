@@ -35,9 +35,6 @@ namespace Skyline.DataMiner.Utils.PerformanceAnalyzerGQI.Models
 		[JsonIgnore]
 		public PerformanceData Parent { get; set; }
 
-		[JsonIgnore]
-		public Guid Id { get; set; }
-
 		[JsonProperty(Order = 0)]
 		public string ClassName { get; set; }
 
