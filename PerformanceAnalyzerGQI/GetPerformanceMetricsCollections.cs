@@ -65,7 +65,6 @@
                             new GQICell
                             {
                                 Value =metric.StartTime.ToUniversalTime(),
-                                DisplayValue = metric.StartTime.ToString("MM/dd/yyyy hh:mm:ss tt"),
                             },
                             new GQICell
                             {

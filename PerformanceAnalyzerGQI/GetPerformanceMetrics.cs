@@ -113,12 +113,10 @@
                     new GQICell
                     {
                         Value = performanceData.StartTime,
-                        DisplayValue = performanceData.StartTime.ToString("dd/MM/yyyy HH:mm:ss.fff"),
                     },
                     new GQICell
                     {
                         Value = performanceData.StartTime + performanceData.ExecutionTime,
-                        DisplayValue = (performanceData.StartTime + performanceData.ExecutionTime).ToString("dd/MM/yyyy HH:mm:ss.fff"),
                     },
                     new GQICell
                     {
