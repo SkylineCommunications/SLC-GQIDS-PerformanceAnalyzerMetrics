@@ -16,6 +16,8 @@
 	[GQIMetaData(Name = "Get Performance Metrics Multi File")]
 	public class GetPerformanceMetricsMultiFile : IGQIDataSource, IGQIOnInit, IGQIInputArguments
 	{
+		private const long _totalFileSizeLimit = 2_000_000_000;
+
 		private static readonly GQIStringColumn _fileNameColumn = new GQIStringColumn("File Name");
 		private static readonly GQIStringColumn _classColumn = new GQIStringColumn("Class");
 		private static readonly GQIStringColumn _methodColumn = new GQIStringColumn("Method");
@@ -41,12 +43,12 @@
 		private DateTime startTimeFilter;
 		private DateTime endTimeFilter;
 
-		private IGQILogger _logger;
+		private IGQILogger logger;
 
 		public OnInitOutputArgs OnInit(OnInitInputArgs args)
 		{
-			_logger = args.Logger;
-			_logger.MinimumLogLevel = GQILogLevel.Debug;
+			logger = args.Logger;
+			logger.MinimumLogLevel = GQILogLevel.Debug;
 			return new OnInitOutputArgs();
 		}
 
@@ -92,43 +94,36 @@
 		{
 			try
 			{
-				ConcurrentDictionary<string, List<PerformanceLog>> performanceMetricsByFile = new ConcurrentDictionary<string, List<PerformanceLog>>();
-				List<FileMetricRow> rows = new List<FileMetricRow>();
+				ConcurrentBag<FileMetricRow> rows = new ConcurrentBag<FileMetricRow>();
 
-				_logger.Information($"Start deserializing");
+				logger.Information($"Start deserializing and processing JSON");
 				var sw = Stopwatch.StartNew();
-				LoadFiles(performanceMetricsByFile);
-				_logger.Information($"Deserializing done in - {sw.ElapsedMilliseconds}ms.");
+				LoadFiles(rows);
+				logger.Information($"Deserializing and processing JSON done in - {sw.ElapsedMilliseconds}ms.");
 
-				_logger.Information($"Start processing");
-				sw = Stopwatch.StartNew();
-				CreateFileMetricRows(performanceMetricsByFile, rows);
-				_logger.Information($"Processing done in - {sw.ElapsedMilliseconds}ms.");
-
-				_logger.Information($"Start filtering rows");
+				logger.Information($"Start filtering and sorting rows");
 				sw = Stopwatch.StartNew();
 				var filteredRows = rows.Where(x => x.ClassName.Equals(classFilter) && x.MethodName.Equals(methodFilter)).OrderBy(x => x.StartTime);
-				_logger.Information($"Filtering rows done in - {sw.ElapsedMilliseconds}ms.");
+				logger.Information($"Filtering and sorting rows done in - {sw.ElapsedMilliseconds}ms.");
 
-				_logger.Information($"Start creating GQI rows");
+				logger.Information($"Start creating GQI rows");
 				sw = Stopwatch.StartNew();
 				var gqiRows = new GQIPage(filteredRows.Select(x => CreateGqiRow(x)).ToArray()) { HasNextPage = false };
-				_logger.Information($"Creating GQI rows done in - {sw.ElapsedMilliseconds}ms.");
+				logger.Information($"Creating GQI rows done in - {sw.ElapsedMilliseconds}ms.");
 
 				return gqiRows;
 			}
 			catch (Exception ex)
 			{
-				_logger.Error(ex.ToString());
+				logger.Error(ex.ToString());
 			}
 
 			return new GQIPage(new GQIRow[0]);
 		}
 
-		private void LoadFiles(ConcurrentDictionary<string, List<PerformanceLog>> performanceMetricsByFile)
+		private void LoadFiles(ConcurrentBag<FileMetricRow> rows)
 		{
-			DirectoryInfo directoryInfo = new DirectoryInfo(fileLocation);
-			FileInfo[] fileInfos = directoryInfo.GetFiles(searchPattern, searchOption);
+			var fileInfos = GetFilesToLoad();
 
 			Parallel.ForEach(fileInfos, fileInfo =>
 			{
@@ -138,27 +133,40 @@
 					using (JsonTextReader jsonReader = new JsonTextReader(reader))
 					{
 						JsonSerializer serializer = new JsonSerializer();
-						performanceMetricsByFile.TryAdd(fileInfo.Name, serializer.Deserialize<List<PerformanceLog>>(jsonReader));
+						var deserializedLogs = serializer.Deserialize<ConcurrentBag<PerformanceLog>>(jsonReader);
+						ProcessLogs(rows, fileInfo, deserializedLogs);
 					}
 				}
 			});
 		}
 
-		private void CreateFileMetricRows(ConcurrentDictionary<string, List<PerformanceLog>> performanceMetricsByFile, List<FileMetricRow> rows)
+		private IEnumerable<FileInfo> GetFilesToLoad()
 		{
-			foreach (var fileMetrics in performanceMetricsByFile)
+			DirectoryInfo directoryInfo = new DirectoryInfo(fileLocation);
+			FileInfo[] fileInfos = directoryInfo.GetFiles(searchPattern, searchOption);
+
+			long currentTotalSize = 0;
+			var fileInfosFiltered = fileInfos.OrderByDescending(x => x.LastWriteTime).TakeWhile(x =>
 			{
-				foreach (PerformanceLog performanceMetric in fileMetrics.Value.Where(x => x.StartTime > startTimeFilter && x.StartTime < endTimeFilter))
+				currentTotalSize += x.Length;
+				return currentTotalSize < _totalFileSizeLimit;
+			});
+
+			return fileInfosFiltered;
+		}
+
+		private void ProcessLogs(ConcurrentBag<FileMetricRow> rows, FileInfo fileInfo, ConcurrentBag<PerformanceLog> deserializedLogs)
+		{
+			foreach (PerformanceLog performanceLog in deserializedLogs.Where(x => x.StartTime > startTimeFilter && x.StartTime < endTimeFilter))
+			{
+				foreach (PerformanceData performanceData in performanceLog.Data)
 				{
-					foreach (PerformanceData performanceData in performanceMetric.Data)
-					{
-						ProcessSubMethods(performanceData, rows, 0, fileMetrics.Key);
-					}
+					ProcessSubMethods(performanceData, rows, 0, fileInfo.Name);
 				}
 			}
 		}
 
-		private void ProcessSubMethods(PerformanceData data, List<FileMetricRow> rows, int level, string fileName)
+		private void ProcessSubMethods(PerformanceData data, ConcurrentBag<FileMetricRow> rows, int level, string fileName)
 		{
 			if (data == null)
 			{
