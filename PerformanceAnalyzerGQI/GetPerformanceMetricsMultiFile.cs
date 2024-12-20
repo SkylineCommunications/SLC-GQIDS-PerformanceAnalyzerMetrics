@@ -127,7 +127,7 @@
 
 			Parallel.ForEach(fileInfos, fileInfo =>
 			{
-				if (fileInfo.LastWriteTime > startTimeFilter && fileInfo.LastWriteTime < endTimeFilter)
+				if (fileInfo.LastWriteTime > startTimeFilter)
 				{
 					using (StreamReader reader = new StreamReader(fileInfo.FullName))
 					using (JsonTextReader jsonReader = new JsonTextReader(reader))
