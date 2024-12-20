@@ -127,7 +127,7 @@
 
 			Parallel.ForEach(fileInfos, fileInfo =>
 			{
-				if (fileInfo.LastWriteTime > startTimeFilter)
+				if (fileInfo.LastWriteTime >= startTimeFilter && fileInfo.CreationTime <= endTimeFilter)
 				{
 					using (StreamReader reader = new StreamReader(fileInfo.FullName))
 					using (JsonTextReader jsonReader = new JsonTextReader(reader))
@@ -149,7 +149,7 @@
 			var fileInfosFiltered = fileInfos.OrderByDescending(x => x.LastWriteTime).TakeWhile(x =>
 			{
 				currentTotalSize += x.Length;
-				return currentTotalSize < _totalFileSizeLimit;
+				return currentTotalSize <= _totalFileSizeLimit;
 			});
 
 			return fileInfosFiltered;
