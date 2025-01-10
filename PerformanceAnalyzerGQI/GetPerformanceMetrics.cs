@@ -33,7 +33,7 @@
 
                 return default;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("Please, select one row so valid data could be shown.");
             }
@@ -47,7 +47,7 @@
                 new GQIStringColumn("Method"),
                 new GQIDateTimeColumn("Start Time"),
                 new GQIDateTimeColumn("End Time"),
-                new GQIIntColumn("Execution Time"),
+                new GQIDoubleColumn("Execution Time"),
                 new GQIIntColumn("Method Level"),
                 new GQIStringColumn("Metadata"),
             };
@@ -120,7 +120,7 @@
                     },
                     new GQICell
                     {
-                        Value = (int)performanceData.ExecutionTime.TotalMilliseconds,
+                        Value = performanceData.ExecutionTime.TotalMilliseconds,
                         DisplayValue = GetExecutionTimeDisplayValue(performanceData.ExecutionTime),
                     },
                     new GQICell
