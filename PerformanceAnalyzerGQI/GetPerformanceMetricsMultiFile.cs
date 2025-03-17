@@ -27,7 +27,7 @@
         private static readonly GQIIntColumn _methodLevelColumn = new GQIIntColumn("Method Level");
         private static readonly GQIStringColumn _metadataColumn = new GQIStringColumn("Metadata");
 
-        private readonly GQIStringArgument pathArgument = new GQIStringArgument("Path") { IsRequired = true, DefaultValue = @"C:\Skyline_Data\MetricLogging" };
+        private readonly GQIStringArgument pathArgument = new GQIStringArgument("Path") { IsRequired = true, DefaultValue = @"C:\Skyline_Data\PerformanceAnalyzer" };
         private readonly GQIStringArgument searchPatternArgument = new GQIStringArgument("Search Pattern") { IsRequired = false, DefaultValue = "*.*" };
         private readonly GQIBooleanArgument searchOptionArgument = new GQIBooleanArgument("Recursive") { DefaultValue = false };
         private readonly GQIStringArgument classArgument = new GQIStringArgument("Class") { IsRequired = true };
