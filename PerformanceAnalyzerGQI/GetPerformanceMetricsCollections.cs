@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using Newtonsoft.Json;
     using Skyline.DataMiner.Analytics.GenericInterface;
     using Skyline.DataMiner.Utils.PerformanceAnalyzerGQI.Models;
@@ -44,6 +45,8 @@
             {
                 new GQIStringColumn("Name"),
                 new GQIDateTimeColumn("Start Time"),
+                new GQIDateTimeColumn("End Time"),
+                new GQIDoubleColumn("Execution Time"),
                 new GQIStringColumn("Metadata"),
                 new GQIStringColumn("ID"),
             };
@@ -55,6 +58,9 @@
 
             foreach (var metric in PerformanceMetrics)
             {
+                DateTime endTime = metric.Data.Max(d => d.StartTime + d.ExecutionTime);
+                TimeSpan executionTime = endTime - metric.StartTime.ToUniversalTime();
+
                 rows.Add(new GQIRow(
                         new[]
                         {
@@ -64,7 +70,16 @@
                             },
                             new GQICell
                             {
-                                Value =metric.StartTime.ToUniversalTime(),
+                                Value = metric.StartTime.ToUniversalTime(),
+                            },
+                            new GQICell
+                            {
+                                Value = endTime,
+                            },
+                            new GQICell
+                            {
+                                Value = executionTime.TotalMilliseconds,
+                                DisplayValue = GetExecutionTimeDisplayValue(executionTime),
                             },
                             new GQICell
                             {
@@ -78,6 +93,17 @@
             }
 
             return new GQIPage(rows.ToArray());
+        }
+
+        private static string GetExecutionTimeDisplayValue(TimeSpan executionTime)
+        {
+            string executionTimeDisplayValue = Math.Round(executionTime.TotalSeconds, 3) + " s";
+            if (executionTime.TotalSeconds < 1.0)
+            {
+                executionTimeDisplayValue = Math.Round(executionTime.TotalSeconds * 1000) + " ms";
+            }
+
+            return executionTimeDisplayValue;
         }
     }
 }
