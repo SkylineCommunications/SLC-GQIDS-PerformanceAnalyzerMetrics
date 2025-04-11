@@ -16,7 +16,7 @@ on:
 jobs:
 
   CI:
-    uses: SkylineCommunications/Low-Code-App-Editor/.github/workflows/Automation Master SDK Workflow.yml@main
+    uses: SkylineCommunications/_ReusableWorkflows/.github/workflows/Automation Master Workflow.yml@main
     with:
       referenceName: ${{ github.ref_name }}
       runNumber: ${{ github.run_number }}
@@ -24,9 +24,7 @@ jobs:
       repository: ${{ github.repository }}
       owner: ${{ github.repository_owner }}
       sonarCloudProjectName: SkylineCommunications_SLC-GQIDS-PerformanceAnalyzerMetrics
-      catalog-identifier: 87af2318-15f5-4a52-b317-c0422d61b730
-      catalog-manifest-path: Documentation/CATALOG_PRIVATE_MANIFEST.yml
-      catalog-readme-path: Documentation/CATALOG_PRIVATE_README.md
+      
     secrets:
       # The API-key: generated in the DCP Admin app (https://admin.dataminer.services/) as authentication for a certain DataMiner System.
       api-key: ${{ secrets.DATAMINER_DEPLOY_KEY }}
