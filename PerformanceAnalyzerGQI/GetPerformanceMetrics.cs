@@ -12,7 +12,7 @@
     {
         private readonly GQIStringArgument idArg = new GQIStringArgument("ID") { IsRequired = true };
 
-        private List<PerformanceLog> selectedPerformaceLog;
+        private List<PerformanceLog> selectedPerformanceLog;
 
         internal static List<PerformanceLog> PerformanceMetrics => GetPerformanceMetricsCollections.PerformanceMetrics;
 
@@ -25,11 +25,11 @@
         {
             try
             {
-                var id = args.GetArgumentValue(idArg);
+                var ids = args.GetArgumentValue(idArg).Split(',');
 
-                selectedPerformaceLog = PerformanceMetrics.Where(x => x.Id.ToString() == id).ToList() ?? PerformanceMetrics;
+                selectedPerformanceLog = PerformanceMetrics.Where(x => ids.Contains(x.Id.ToString())).ToList() ?? PerformanceMetrics;
 
-                selectedPerformaceLog = selectedPerformaceLog.Any() ? selectedPerformaceLog : PerformanceMetrics;
+                selectedPerformanceLog = selectedPerformanceLog.Any() ? selectedPerformanceLog : PerformanceMetrics;
 
                 return default;
             }
@@ -57,7 +57,7 @@
         {
             var rows = new List<GQIRow>();
 
-            foreach (var performanceMetric in selectedPerformaceLog)
+            foreach (var performanceMetric in selectedPerformanceLog)
             {
                 foreach (var performanceData in performanceMetric.Data)
                 {

@@ -26,16 +26,21 @@
             try
             {
                 var location = args.GetArgumentValue(fileLocation);
-                var name = args.GetArgumentValue(fileName);
+                var names = args.GetArgumentValue(fileName).Split(',');
 
-                var rawJson = File.ReadAllText(Path.Combine(location, name));
-                PerformanceMetrics = JsonConvert.DeserializeObject<List<PerformanceLog>>(rawJson);
+                PerformanceMetrics=new List<PerformanceLog>();
+
+                foreach (var name in names)
+                {
+                    var rawJson = File.ReadAllText(Path.Combine(location, name));
+                    PerformanceMetrics.AddRange(JsonConvert.DeserializeObject<List<PerformanceLog>>(rawJson));
+                }
 
                 return default;
             }
             catch (Exception ex)
             {
-                throw new Exception("Please, select one row so valid data could be shown.");
+                throw new Exception("Please select at least one file, so valid data can be shown.");
             }
         }
 
